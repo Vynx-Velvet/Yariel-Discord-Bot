@@ -1,8 +1,7 @@
 import { REST, Routes } from 'discord.js';
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import dotenv from 'dotenv';
-dotenv.config({ path: '.env.local' });
+
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier
 const foldersPath = join('commands');

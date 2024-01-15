@@ -2,20 +2,11 @@
   "name": "yariel-discord-bot",
   "module": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run index.js",
-    "deploy-commands": "bun run deploy/deploy-commands.js"
+    "deployCommands": "node --env-file=.env.local ./deploy/deploy-commands.js",
+    "start": "node --env-file=.env.local index.js"
   },
   "dependencies": {
-    "api": "^6.1.1",
-    "axios": "^1.6.2",
-    "chalk": "^5.3.0",
-    "cheerio": "^1.0.0-rc.12",
-    "discord.js": "^14.14.1",
-    "dotenv": "^16.3.1",
-    "nightmare": "^2.8.0",
-    "playwright": "^1.40.1",
-    "tslib": "^2.6.2"
+    "discord.js": "^14.14.1"
   },
   "devDependencies": {
     "bun-types": "^1.0.20"

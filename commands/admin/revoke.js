@@ -1,6 +1,5 @@
 // 'replenish.js'
 import { SlashCommandBuilder } from "discord.js";
-import { env } from "node:process";
 
 export const data = new SlashCommandBuilder()
   .setName("revoke")
@@ -8,15 +7,17 @@ export const data = new SlashCommandBuilder()
     (option) =>
       option
         .setName("amount")
-        .setDescription("The amount of Y-Tokens to revoke from the user's account.")
-        .setRequired(true) // Set the option as required
+        .setDescription(
+          "The amount of Y-Tokens to revoke from the user's account."
+        )
+        .setRequired(true)
   )
   .addMentionableOption(
     (option) =>
       option
         .setName("user")
         .setDescription("The user to revoke Y-Tokens from.")
-        .setRequired(true) // Set the option as required
+        .setRequired(true)
   )
   .setDescription("Revoke a user's Y-Tokens.");
 
@@ -27,7 +28,7 @@ export async function execute(interaction) {
   const options = {
     method: "POST",
     headers: {
-      secret: env.INTERNAL_TOKEN,
+      secret: process.env.INTERNAL_TOKEN,
       "content-type": "application/json",
     },
     body: JSON.stringify({
@@ -35,12 +36,13 @@ export async function execute(interaction) {
         user: interaction.user,
         guild: interaction.guild,
       },
-      replenish_request: {
+      revocation_request: {
         amount: amount,
         user: user,
       },
     }),
   };
+
   const response = await fetch(
     "http://localhost:3000/api/v1/ai/revokeToken",
     options
@@ -52,11 +54,11 @@ export async function execute(interaction) {
       await interaction.reply({
         content: `Successfully revoked <:_:${process.env.Y_TOKEN_ID}>${amount} from  ${user}.\nNew Balance: <:_:${process.env.Y_TOKEN_ID}>${data.message}`,
       });
-	  break;
-	case "error":
-	  await interaction.reply({
-		content: `Error: ${data.message}`
-	  })
-	  break;
+      break;
+    case "error":
+      await interaction.reply({
+        content: `Error: ${data.message}`,
+      });
+      break;
   }
 }

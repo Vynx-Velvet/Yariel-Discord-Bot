@@ -1,15 +1,16 @@
 // 'index.js'
-// Import the required modules
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import { Client, Collection, Events, GatewayIntentBits } from "discord.js";
 
-// Load the .env file
-import dotenv from "dotenv";
-dotenv.config({ path: ".env.local" });
-
 // Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages] });
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+  ],
+});
 
 // Create a new collection for commands
 client.commands = new Collection();
@@ -21,7 +22,7 @@ const commandFolders = readdirSync(foldersPath);
 // Function to import all commands from the commands directory
 const importCommands = async () => {
   for (const folder of commandFolders) {
-	// Get the path to the commands folder and it's associated files
+    // Get the path to the commands folder and it's associated files
     const commandsPath = join(foldersPath, folder);
     const commandFiles = readdirSync(commandsPath).filter((file) =>
       file.endsWith(".js")
@@ -30,7 +31,7 @@ const importCommands = async () => {
     for (const file of commandFiles) {
       const filePath = join(commandsPath, file);
       try {
-		// Import the command file
+        // Import the command file
         const command = await import(`./${filePath.replace(/\\/g, "/")}`);
         // Check if the command has the required properties
         if ("data" in command && "execute" in command) {
@@ -43,7 +44,7 @@ const importCommands = async () => {
           );
         }
       } catch (error) {
-		// If there is an error, log it
+        // If there is an error, log it
         console.error(`Error importing ${filePath}:`, error);
       }
     }
@@ -61,13 +62,10 @@ importCommands().then(() => {
   client.on(Events.InteractionCreate, async (interaction) => {
     // Check if the interaction is an autocomplete request
     if (interaction.isAutocomplete()) {
-      // Check if the interaction is for the patch command
       if (interaction.commandName === "patch") {
-        // Get the user's input
         const input = interaction.options.getFocused(true);
         // The list of allowed games
         const games = ["LeagueOfLegends", "TFT", "Valorant"];
-        // Check if the input is not empty
         if (!input.value == "") {
           // Filter the games that match the input
           const filtered = games.filter((game) =>
@@ -86,12 +84,11 @@ importCommands().then(() => {
       }
     }
 
-
     if (!interaction.isChatInputCommand()) return;
 
     // Get the command from the collection
     const command = interaction.client.commands.get(interaction.commandName);
-	
+
     if (!command) {
       console.error(
         `No command matching ${interaction.commandName} was found.`
@@ -99,7 +96,7 @@ importCommands().then(() => {
       return;
     }
 
-	// Execute the command
+    // Execute the command
     try {
       await command.execute(interaction);
     } catch (error) {

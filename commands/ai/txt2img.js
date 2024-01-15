@@ -1,6 +1,6 @@
 // 'patchnotes.js'
 import { SlashCommandBuilder } from "discord.js";
-import { env } from "node:process";
+
 export const data = new SlashCommandBuilder()
   .setName("txt2img")
   .addStringOption((option) =>
@@ -199,16 +199,6 @@ export async function execute(interaction) {
   await genImage(interaction)
 }
 
-//Send a Post Request to the API with the proper payload
-
-
-const bunStatusHead = {
-  method: "GET",
-  headers: {
-    secret: env.INTERNAL_TOKEN,
-    "content-type": "application/json"
-  }
-};
 
 async function genImage(interaction) {
   const payload = {
@@ -225,7 +215,7 @@ async function genImage(interaction) {
   const bunGenHead = {
     method: "POST",
     headers: {
-      secret: env.INTERNAL_TOKEN,
+      secret: process.env.INTERNAL_TOKEN,
       "content-type": "application/json"
     },
     body: JSON.stringify({
@@ -252,12 +242,24 @@ async function genImage(interaction) {
   return
 }
 
+
+
 async function fetchResults(processId, interaction) {
+  const bunStatusHead = {
+    method: "GET",
+    headers: {
+      secret: process.env.INTERNAL_TOKEN,
+      "content-type": "application/json"
+    }
+  };
+
   const status = await fetch(
     `http://localhost:3000/api/v1/ai/status?jobId=${processId}`,
     bunStatusHead
   );
+
   const response = JSON.parse(await status.text())
+
   switch (response.jobget[0].status) {
     case "FAILED":
       await interaction.editReply(
